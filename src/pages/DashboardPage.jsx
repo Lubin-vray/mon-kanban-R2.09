@@ -22,7 +22,9 @@ export default function DashboardPage({ session }) {
     supabase.from('boards').select('id').limit(1)
     .then(({ data }) => { if (data?.[0]) setBoardId(data[0].id); });
   }, []); 
-
+  useEffect(() => { 
+    fetchUsers(); 
+  }, []);
   async function handleLogout() {
     await supabase.auth.signOut();
   }

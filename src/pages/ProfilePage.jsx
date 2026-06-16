@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.jsx
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import Navbar from '../components/Navbar';
@@ -7,6 +6,7 @@ export default function ProfilePage({ session }) {
   const user = session.user;
 
   const [fullName, setFullName] = useState(user.user_metadata?.full_name || '');
+  const [bio, setBio] = useState(user.user_metadata?.bio || '');
   const [infoMsg, setInfoMsg] = useState('');
   const [infoErr, setInfoErr] = useState('');
 
@@ -20,7 +20,9 @@ export default function ProfilePage({ session }) {
   async function handleSaveInfo(e) {
     e.preventDefault();
     setInfoErr(''); setInfoMsg('');
-    const { error } = await supabase.auth.updateUser({ data: { full_name: fullName } });
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: fullName, bio: bio }
+    });
     if (error) setInfoErr(error.message);
     else setInfoMsg('✅ Profil mis à jour !');
   }
@@ -85,6 +87,16 @@ export default function ProfilePage({ session }) {
               placeholder="Votre nom complet"
               style={inputStyle}
             />
+            <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 500 }}>
+              Bio
+            </label>
+            <textarea
+              value={bio}
+              onChange={e => setBio(e.target.value)}
+              placeholder="Parlez de vous..."
+              rows={3}
+              style={inputStyle}
+            />
             <button type="submit" style={btnStyle}>Sauvegarder</button>
             {infoMsg && <p style={{ color: 'green', marginTop: '0.5rem' }}>{infoMsg}</p>}
             {infoErr && <p style={{ color: 'red', marginTop: '0.5rem' }}>{infoErr}</p>}
@@ -130,6 +142,7 @@ export default function ProfilePage({ session }) {
             </label>
           </div>
         </div>
+
       </main>
     </div>
   );

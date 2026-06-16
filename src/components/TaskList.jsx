@@ -3,6 +3,13 @@ import { supabase } from '../lib/supabase';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 
+const COLUMNS = [
+  { key: 'todo',        label: '📋 À faire',    color: '#64748B' },
+  { key: 'in_progress', label: '⚙️ En cours',   color: '#3B82F6' },
+  { key: 'review',      label: '👀 Validation', color: '#F59E0B' },
+  { key: 'done',        label: '✅ Terminée',   color: '#16A34A' },
+];
+
 export default function TaskList({ boardId, session }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,14 +42,62 @@ export default function TaskList({ boardId, session }) {
     <div>
       <TaskForm boardId={boardId} onCreated={fetchTasks} session={session} />
 
+      {/* Colonnes Kanban */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '0.75rem'
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '1rem',
+        marginTop: '1.5rem',
       }}>
-        {tasks.map(task => (
-          <TaskCard key={task.id} task={task} onDelete={handleDelete} />
-        ))}
+        {COLUMNS.map(col => {
+          const colTasks = tasks.filter(t => t.status === col.key);
+          return (
+            <div key={col.key} style={{
+              background: '#F1F5F9',
+              borderRadius: '12px',
+              padding: '1rem',
+              minHeight: '200px',
+            }}>
+              {/* En-tête colonne */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '0.75rem',
+              }}>
+                <h3 style={{ margin: 0, fontSize: '0.95rem', color: col.color }}>
+                  {col.label}
+                </h3>
+                <span style={{
+                  background: col.color,
+                  color: 'white',
+                  borderRadius: '999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  padding: '0.1rem 0.6rem',
+                }}>
+                  {colTasks.length}
+                </span>
+              </div>
+
+              {/* Tâches de la colonne */}
+              {colTasks.length === 0 ? (
+                <p style={{ color: '#CBD5E1', fontSize: '0.85rem', textAlign: 'center', marginTop: '2rem' }}>
+                  Aucune tâche
+                </p>
+              ) : (
+                colTasks.map(task => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onDelete={handleDelete}
+                    session={session}   // ✅ session transmis
+                  />
+                ))
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {tasks.length === 0 && (

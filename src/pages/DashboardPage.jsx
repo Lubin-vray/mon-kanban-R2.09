@@ -34,7 +34,6 @@ export default function DashboardPage({ session }) {
       <Navbar session={session} />
 
       <main style={{ padding: '2rem' }}>
-        {/* Navigation par onglets */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
           {[
             ['tasks', '🗂 Tâches'],
@@ -58,7 +57,9 @@ export default function DashboardPage({ session }) {
           ))}
         </div>
 
-        {tab === 'tasks' && boardId && <TaskList boardId={boardId} />}
+        {tab === 'tasks' && boardId && (
+          <TaskList boardId={boardId} session={session} />
+        )}
 
         {tab === 'tasks' && !boardId && (
           <p style={{ color: '#94A3B8' }}>

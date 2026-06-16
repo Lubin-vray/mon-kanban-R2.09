@@ -49,29 +49,6 @@ export default function ProfilePage({ session }) {
     setUploading(false);
   }
 
-  async function sendEmail() {
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: ['destinataire@exemple.com'],
-        subject: '📋 Nouvelle tâche KanbanRT',
-        html: `
-          <h1>Nouvelle tâche assignée !</h1>
-          <p>La tâche <strong>Configurer Supabase</strong> vous a été assignée.</p>
-          <p>Statut : <em>À faire</em> · Priorité : <em>Haute</em></p>
-          <a href='https://mon-kanban.vercel.app/dashboard'>Voir le tableau →</a>
-        `,
-      }),
-    });
-    const result = await response.json();
-    if (result.success) {
-      console.log('E-mail envoyé ! ID :', result.id);
-    } else {
-      console.error('Erreur :', result.error);
-    }
-  }
-
   const cardStyle = {
     background: 'white', borderRadius: '12px', padding: '1.5rem',
     marginBottom: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)', maxWidth: '480px',
@@ -153,15 +130,6 @@ export default function ProfilePage({ session }) {
             </label>
           </div>
         </div>
-
-        {/* Test envoi email */}
-        <div style={cardStyle}>
-          <h2 style={{ marginTop: 0, color: '#1A8C82' }}>Test e-mail</h2>
-          <button onClick={sendEmail} style={btnStyle}>
-            Envoyer un e-mail test
-          </button>
-        </div>
-
       </main>
     </div>
   );

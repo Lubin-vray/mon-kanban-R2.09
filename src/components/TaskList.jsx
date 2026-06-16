@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 
-export default function TaskList({ boardId }) {
+export default function TaskList({ boardId, session }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -11,16 +11,16 @@ export default function TaskList({ boardId }) {
     setLoading(true);
     const { data, error } = await supabase
       .from('tasks')
-      .select('*, categories(*)') // jointure automatique !
+      .select('*, categories(*)')
       .eq('board_id', boardId)
       .order('created_at', { ascending: false });
-      
+
     if (!error) setTasks(data || []);
     setLoading(false);
   }
 
-  useEffect(() => { 
-    fetchTasks(); 
+  useEffect(() => {
+    fetchTasks();
   }, [boardId]);
 
   async function handleDelete(taskId) {
@@ -33,18 +33,18 @@ export default function TaskList({ boardId }) {
 
   return (
     <div>
-      <TaskForm boardId={boardId} onCreated={fetchTasks} />
-      
-      <div style={{ 
+      <TaskForm boardId={boardId} onCreated={fetchTasks} session={session} />
+
+      <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '0.75rem' 
+        gap: '0.75rem'
       }}>
         {tasks.map(task => (
           <TaskCard key={task.id} task={task} onDelete={handleDelete} />
         ))}
       </div>
-      
+
       {tasks.length === 0 && (
         <p style={{ textAlign: 'center', color: '#94A3B8', padding: '2rem' }}>
           Aucune tâche — créez-en une ci-dessus ! 🚀

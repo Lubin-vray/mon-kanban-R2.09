@@ -12,6 +12,7 @@ const STATUS_LABELS = {
   review: { label: '👀 Validation', color: '#F59E0B' },
   done: { label: '✅ Terminée', color: '#16A34A' },
 };
+const [showComments, setShowComments] = useState(false);
 
 export default function TaskCard({ task, onDelete }) {
   const priority = PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.low;
@@ -138,6 +139,12 @@ export default function TaskCard({ task, onDelete }) {
             📅 {isOverdue ? '⚠ ' : ''}{dueLabel}
           </span>
         )}
+        <button onClick={() => setShowComments(!showComments)}
+          style={{ fontSize: '0.8rem', color: '#1A8C82', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+          💬 {showComments ? 'Masquer' : 'Commentaires'}
+        </button>
+        {showComments && <TaskComments taskId={task.id} session={session} />}
+
         
       </div>
     </div>
